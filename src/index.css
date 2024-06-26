@@ -1,0 +1,17 @@
+/* Add custom styles in index.css or App.css */
+.container {
+    max-width: 1000px;
+    background-color: grey;
+}
+
+.button-group button {
+    margin: 5px 10px;
+}
+
+.form-control {
+    margin-top: 10px;
+}
+
+textarea {
+    resize: none;
+}

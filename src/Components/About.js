@@ -13,76 +13,62 @@ export default function About(props) {
     const validateForm = () => {
         const errors = {};
         if (!validateEmail(email)) {
-            errors.email = 'Please enter a valid email address.';
+            errors.email = 'Invalid email address';
         }
-        if (feedback.trim() === '') {
-            errors.feedback = 'Feedback cannot be empty.';
+        if (!feedback) {
+            errors.feedback = 'Feedback cannot be empty';
         }
-        return errors;
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
     };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const errors = validateForm();
-        if (Object.keys(errors).length === 0) {
-            props.showAlert("Response Submitted Successfully", "success");
-
-            const content = `Email: ${email}\nFeedback: ${feedback}`;
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'feedback.txt';
-            a.click();
-            URL.revokeObjectURL(url);
-
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (validateForm()) {
+            console.log('Email:', email);
+            console.log('Feedback:', feedback);
             setEmail('');
             setFeedback('');
+            props.showAlert('Your feedback is successfully sent.', 'success');
         } else {
-            setFormErrors(errors);
+            props.showAlert('Please correct the errors in the form.', 'danger');
         }
     };
 
     return (
-        <>
-            <form onSubmit={handleSubmit} className="mt-4" style={{ color: props.mode === 'dark' ? 'white' : 'black' }}>
-                <div className="mb-3" >
+        <div className="container" style={{ color: props.mode === 'dark' ? 'white' : 'black' }}>
+            <h1 className="my-3">About Us</h1>
+            <p>
+                Welcome to Text-Editor, your go-to web application for easy and efficient text manipulation. Whether you need to convert text cases, remove extra spaces, or find and replace specific words, we've got you covered. Our simple and intuitive interface makes text editing a breeze.
+            </p>
+            <h2>Contact Us</h2>
+            <form onSubmit={handleSubmit}>
+                <div className="mb-3">
                     <label htmlFor="email" className="form-label">Email address</label>
                     <input
                         type="email"
                         className={`form-control ${formErrors.email ? 'is-invalid' : ''}`}
                         id="email"
-                        placeholder="name@example.com"
                         value={email}
-                        style={{
-                            backgroundColor: props.mode === 'light' ? 'white' : 'grey',
-                            color: props.mode === 'dark' ? 'white' : 'black',
-
-                        }}
                         onChange={(e) => setEmail(e.target.value)}
-                        required
+                        aria-describedby="emailHelp"
                     />
                     {formErrors.email && <div className="invalid-feedback">{formErrors.email}</div>}
+                    <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
                 </div>
-                <div className="mb-3" >
+                <div className="mb-3">
                     <label htmlFor="feedback" className="form-label">Feedback</label>
                     <textarea
                         className={`form-control ${formErrors.feedback ? 'is-invalid' : ''}`}
                         id="feedback"
-                        rows="3"
                         value={feedback}
-                        style={{
-                            backgroundColor: props.mode === 'light' ? 'white' : 'grey',
-                            color: props.mode === 'dark' ? 'white' : 'black',
-
-                        }}
                         onChange={(e) => setFeedback(e.target.value)}
-                        required
-                    ></textarea>
+                        rows="4"
+                    />
                     {formErrors.feedback && <div className="invalid-feedback">{formErrors.feedback}</div>}
                 </div>
                 <button type="submit" className="btn btn-primary">Submit</button>
             </form>
-        </>
+        </div>
     );
 }
